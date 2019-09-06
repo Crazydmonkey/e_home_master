@@ -1,0 +1,96 @@
+<style>
+	.btn {
+		padding: .5em 1em;
+		border-radius: 3px;
+		color: #333;
+		border:1px solid #ccc;
+		cursor: pointer;
+		display: inline-block;
+	}
+	.btns {
+		margin-bottom: .5em;
+	}
+	.table {
+		border-collapse: collapse;
+		width: 100%;
+		text-align: center;
+	}
+	.table td {
+		border: 1px solid #ccc;
+		line-height: 2em;
+	}
+	.table tr.current {
+		background-color: #ededed;
+	}
+	.none {
+		display: none;
+	}
+</style>
+<script>
+	var baseURL = "http://134.175.154.93:6677";
+// 加载数据
+function reloadData(){
+	var url = baseURL+"/product/findAllProduct";
+	$.get(url,function(response,status){
+		//1. 将tbody清空
+		$("#product_tbl tbody").empty();
+		//2. 追加新的值
+		response.data.forEach(function(item){
+			if(item.status==1){
+				var status="正常";
+			}
+			var newTr = $(`<tr>
+				<td><input type="checkbox" value="`+item.id+`"></td>
+				<td>`+item.name+`</td>
+				<td>`+item.description+`</td>
+				<td>`+item.price+"元"+`</td>
+				<td>`+status+`</td>
+				<td>`+item.photo+`</td>
+				<td>
+					<a class="btn_del" href="#">删除</a>
+					<a class="btn_upd" href="#">修改</a>
+				</td>
+			</tr>`);
+			$("#product_tbl").append(newTr)
+		});
+	});
+}
+
+// 文档加载完毕之后执行
+$(function(){
+	//调用重载数据
+	reloadData();
+})
+</script>
+
+<div class="product">
+	<div class="btns">
+		<div id="btn_add" class="btn">添加</div>
+		<div id="btn_import" class="btn">批量导入</div>
+	</div>
+	<div style="margin-bottom: .5em">
+		<!-- 表单 -->
+		<form action="javascript:void(0)">
+			<input type="hidden" name="id" />
+			姓名<input type="text" name="realname"/>
+			手机号 <input type="text" name="telephone"/>
+			<input type="submit" value="提交">
+		</form>
+	</div>
+	<table class="table" id="product_tbl">
+		<thead>
+			<tr>
+				<td width="80px">编号</td>
+				<td>名称</td>
+				<td>描述</td>
+				<td>价格</td>
+				<td>状态</td>
+				<td>照片</td>
+				<td width="100px">操作</td>
+			</tr>
+		</thead>
+		<tbody>
+			
+		</tbody>
+	</table>
+</div>
