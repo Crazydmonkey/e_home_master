@@ -1,93 +1,199 @@
-<style>
-	.btn {
-		padding: .5em 1em;
-		border-radius: 3px;
-		color: #333;
-		border:1px solid #ccc;
-		cursor: pointer;
-		display: inline-block;
-	}
-	.btns {
-		margin-bottom: .5em;
-	}
-	.table {
-		border-collapse: collapse;
-		width: 100%;
-		text-align: center;
-	}
-	.table td {
-		border: 1px solid #ccc;
-		line-height: 2em;
-	}
-	.table tr.current {
-		background-color: #ededed;
-	}
-	.none {
-		display: none;
-	}
-</style>
-<script>
-	var baseURL = "http://134.175.154.93:6677";
-// 加载数据
-function reloadData(){
-	var url = baseURL+"/waiter/findAllWaiter";
-	$.get(url,function(response,status){
-		//1. 将tbody清空
-		$("#waiter_tbl tbody").empty();
-		//2. 追加新的值
-		response.data.forEach(function(item){
-			var newTr = $(`<tr>
-				<td><input type="checkbox" value="`+item.id+`"></td>
-				<td>`+item.realname+`</td>
-				<td>`+item.telephone+`</td>
-				<td>`+item.idcard+`</td>
-				<td>`+item.status+`</td>
-				<td>`+item.photo+`</td>
-				<td>
-					<a class="btn_del" href="#">删除</a>
-					<a class="btn_upd" href="#">修改</a>
-				</td>
-			</tr>`);
-			$("#waiter_tbl").append(newTr)
-		});
-	});
-}
-
-// 文档加载完毕之后执行
-$(function(){
-	//调用重载数据
-	reloadData();
-})
-</script>
 
 <div class="waiter">
 	<div class="btns">
-		<div id="btn_add" class="btn">添加</div>
-		<div id="btn_import" class="btn">批量导入</div>
+		<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModalCenter">添加</button>
+		<button id="btn_batch" type="button" class="btn btn-danger" style="margin-left:1em">批量删除</button>
 	</div>
-	<div style="margin-bottom: .5em">
-		<!-- 表单 -->
-		<form action="javascript:void(0)">
-			<input type="hidden" name="id" />
-			姓名<input type="text" name="realname"/>
-			手机号 <input type="text" name="telephone"/>
-			<input type="submit" value="提交">
-		</form>
-	</div>
-	<table class="table" id="waiter_tbl">
+	
+	<table class="table table-hover" id="waiter_tbl" style="margin-top:2em">
 		<thead>
 			<tr>
-				<td width="80px">编号</td>
-				<td>名称</td>
-				<td>电话</td>
-				<td>卡号</td>
-				<td>状态</td>
-				<td>照片</td>
-				<td width="100px">操作</td>
+				<th scope="col">编号</th>
+				<th scope="col">姓名</th>
+				<th scope="col">头像</th>
+				<th scope="col">手机</th>
+				<th scope="col">卡号</th>
+				<th scope="col">状态</th>
+				<th scope="col">操作</th>
 			</tr>
 		</thead>
 		<tbody>
 			
 		</tbody>
 	</table>
+	<!-- Modal -->
+	<div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+	  <div class="modal-dialog modal-dialog-centered" role="document">
+	    <div class="modal-content">
+	      <div class="modal-header">
+	        <h5 class="modal-title" id="exampleModalCenterTitle">添加员工信息</h5>
+	        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+	          <span aria-hidden="true">&times;</span>
+	        </button>
+	      </div>
+	      <div class="modal-body">
+	       	<form>
+	       		<input type="text" name="id" style="display:none">
+				<div class="row">
+				<div class="col-2" style="margin-left:3em;margin-top:.5em">姓名</div>
+				<div class="col-8" style="margin-left:-2.5em">
+				  <input type="text" name="realname" class="form-control" placeholder="姓名">
+				</div>
+				</div>
+				<div class="row">
+				<div class="col-2" style="margin-left:3em;margin-top:2.5em">头像</div>
+				<div class="col-8" style="margin-left:-2.5em;margin-top:2em;">
+				  <input type="text" name="photo" class="form-control" placeholder="头像">
+				</div>
+				</div>
+				<div class="row">
+				<div class="col-2" style="margin-left:3em;padding-top: 2.5em;">手机</div>
+				<div class="col-8" style="margin-left:-2.5em;margin-top:2em;">
+				  <input type="text" name="telephone" class="form-control" placeholder="手机">
+				</div>
+				</div>
+				<div class="row">
+				<div class="col-2" style="margin-left:3em;padding-top: 2.5em;">状态</div>
+				<div class="col-8" style="margin-left:-2.5em;margin-top:2em;">
+				  <input type="text" name="status" class="form-control" placeholder="状态">
+				</div>
+				</div>
+				<div class="row">
+				<div class="col-2" style="margin-left:3em;padding-top: 2.5em;">卡号</div>
+				<div class="col-8" style="margin-left:-2.5em;margin-top:2em;">
+				  <input type="text" name="idcard" class="form-control" placeholder="卡号">
+				</div>
+				</div>
+			</form>
+	      </div>
+	      <div class="modal-footer">
+	        <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
+	        <button id="btn_add_waiter" type="button" class="btn btn-primary">确定</button>
+	      </div>
+	    </div>
+	  </div>
+	</div>
+	<!-- modal结束 -->
+
+	<div style="margin:0 auto;" class="toast" id="Toast" role="alert" aria-live="assertive" aria-atomic="true">
+	<div class="toast-header">
+	  <img src="..." class="rounded mr-2" alt="...">
+	  <strong class="mr-auto">Bootstrap</strong>
+	  
+	  <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
+	    <span aria-hidden="true">&times;</span>
+	  </button>
+	</div>
+	<div class="toast-body">
+	 	删除成功
+	</div>
+	</div>
 </div>
+
+<script>
+	$.ajaxSetup({
+		traditional:true,
+	})
+
+	var baseURL = "http://134.175.100.63:6677";
+	// 初始化数据
+	function initData(){
+	var url = baseURL+"/waiter/findAll"
+	$.get(url,function(response,status){
+		$("#waiter_tbl tbody").empty();
+		response.data.forEach(function(item){
+			var newTr = $(`<tr>
+				<td><input type="checkbox" value="`+item.id+`"></td>
+				<td>`+item.realname+`</td>
+				<td>`+item.photo+`</td>
+				<td>`+item.telephone+`</td>
+				<td>`+item.idcard+`</td>
+				<td>`+item.status+`</td>
+
+				<td>
+					<a class="btn_del btn btn-danger" href="#">删除</a>
+					<a class="btn_upd btn btn-primary" href="#">修改</a>
+				</td>
+			</tr>`);
+			$("#waiter_tbl").append(newTr);
+		});
+	});
+}
+$(function(){
+	initData();
+	// 删除或修改按钮
+	$("tbody").on('click',"a",function(e){
+		e.preventDefault();
+		console.log(e.target.className)
+		if(e.target.className=="btn_del btn btn-danger"){
+
+			var id=$(this).parents('tr').find('input').val();
+			data = {
+				id:id
+			}
+			var url = baseURL+"/waiter/deleteById"
+			$.get(url,data,function(result){
+					$('#Toast').toast('show')
+					initData();
+				});
+
+		}else{
+			$("input[name=id]").val($(this).parents('tr').find('input').val());
+			$("input[name=realname]").val($(this).parents('tr').find('td:nth-child(2)').text());
+			$("input[name=photo]").val($(this).parents('tr').find('td:nth-child(3)').text());
+			$("input[name=telephone]").val($(this).parents('tr').find('td:nth-child(4)').text());
+			$("input[name=status]").val($(this).parents('tr').find('td:nth-child(5)').text());
+			$('#exampleModalCenter').modal('show')
+		}
+	})
+	
+	// 保存和更新
+	$('#btn_add_waiter').on('click',function(e){
+
+		var data={};
+		data.id=$("input[name=id]").val();
+		console.log(data.id)
+		data.realname=$("input[name=realname]").val();
+		data.telephone=$("input[name=telephone]").val();
+		data.photo=$("input[name=photo]").val();
+		data.idcard=$("input[name=idcard]").val();
+		data.status=$("input[name=status]").val();
+		// 下拉列表的数据获取和动态拼接节点
+		$.ajax({
+		type:"POST",
+		data:data,
+		// headers:{'Content-Type':'application/json;charset=utf8'},
+		url:baseURL+"/waiter/saveOrUpdate",
+		success:function(data){
+			console.log(data.data)
+			$('#exampleModalCenter').modal('hide')
+			$("input[name=realname]").val("");
+			$("input[name=telephone]").val("");
+			$('input[name=photo]').val("");
+			$('input[name=idcard]').val("");
+			$("input[name=status]").val("");
+			initData();
+		}
+	});
+	})
+	// 批量删除
+	$("#btn_batch").on('click',function(e){
+		var aaa = 
+		$('.table input:checked')
+		.toArray()
+		.map(function(item){
+			return parseInt(item.value);
+		})
+		// console.log(ids);
+		var url = baseURL+'/waiter/batchDelete'
+		console.log(aaa)
+		
+		param={'ids':aaa}
+		$.post(url,param,function(response){
+			console.log(response);
+			initData();
+		})
+	})
+})
+	
+</script>
